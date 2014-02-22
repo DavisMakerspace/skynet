@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 
+# Install couchdb and start service.
 apt-get update
-apt-get install -y couchdb nodejs
+apt-get install -y couchdb 
 
 cp /vagrant/local.ini /etc/couchdb/local.ini
 
 service couchdb start
+
+# Install nodejs from PPA.
+apt-get install -y python-software-properties
+
+add-apt-repository -y ppa:chris-lea/node.js
+apt-get update
+apt-get install -y nodejs npm
+
+cd /vagrant/www && npm install -g
+
+# Start the node server.
+cd /vagrant/www && node app.js
