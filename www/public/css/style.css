@@ -1,0 +1,21 @@
+/*@import url(http://fonts.googleapis.com/css?family=Lato:100,300);*/
+@import 'bootstrap-glyphicons.css';
+@import 'font-awesome.min.css';
+ 
+
+html {
+    height: 100%;
+}
+
+body {
+    /*font-family: 'Lato', sans-serif;*/
+    background-color: #ededed;
+    overflow: hidden;
+    color: #222;
+    height: 100%;
+}
+
+body.modal-open {
+    margin-right: 0;
+}
+
