@@ -13,9 +13,9 @@ apt-get install -y python-software-properties
 
 add-apt-repository -y ppa:chris-lea/node.js
 apt-get update
-apt-get install -y nodejs npm
+apt-get install -y nodejs
 
-cd /vagrant/www && npm install -g
+cd /vagrant/www && npm install
 
 # Start the node server.
 cd /vagrant/www && node app.js
