@@ -16,6 +16,5 @@ apt-get update
 apt-get install -y nodejs
 
 cd /vagrant/www && npm install
-
-# Start the node server.
-cd /vagrant/www && node app.js
+cp /vagrant/nodejs.conf /etc/init/
+start nodejs
