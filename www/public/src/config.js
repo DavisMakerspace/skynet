@@ -8,7 +8,10 @@ require.config(
 
   shim: {
     "libs/backbone": {
-        deps: ["libs/underscore", "libs/jquery"],
+        deps: [
+        	"libs/underscore", 
+        	"libs/jquery"
+    	],
         exports: "Backbone"
     },
     "libs/underscore": {
@@ -17,9 +20,15 @@ require.config(
     "libs/jquery": {
         exports: "$"
     },
+    
+    "libs/jquery.cookie": ["libs/jquery"],
     "libs/jquery.bootstrap-growl": ["libs/jquery"],
-    "libs/bootstrap.min": ["libs/jquery"],
-    "main": ["libs/backbone", "libs/bootstrap.min", "libs/jquery.bootstrap-growl"],    
+    
+    "main": [
+    	"libs/backbone", 
+    	"libs/jquery.cookie",
+    	"libs/jquery.bootstrap-growl"
+    	]
   }
 
 });

@@ -1,73 +1,82 @@
 define([
-  'channel',       
-  'text!templates/master.html'
+    'models/session',
+    'src/views/login.js'
 ], 
 
-function(
-         channel,
-         MasterTpl
-         )
+function(Session, LoginView)
 {
-  
-    var mainHomeView = Backbone.View.extend(
+    var mainView = Backbone.View.extend(
     {
+        className: '',
+        
         initialize: function()
-        {
-            that = this;
+        {            
 
-            _.extend(window, Backbone.Events);
+            this.loginView = new LoginView();
 
-/*            
-            settings.bind('all', function(e) {
-                if (_.indexOf(['sync', 'destroy', 'add', 'change'], e) != -1) {
-                    
+            sessionError = _.debounce(this.showSessionError, 300);
+            
+            jQuery.ajaxSetup({
+                statusCode: {
+                    400: function(s) {
+                        // bad request 
+                        if (s.responseText.indexOf('Invalid Session') !== -1) {
+                            sessionError();
+                            Backbone.history.navigate('logout', true);
+                        }
+                        else if (s.responseText.indexOf('Expired Session') !== -1) {
+                            sessionError();
+                            Backbone.history.navigate('logout', true);
+                        }
+                        else if (s.responseText.indexOf('Invalid Login') !== -1) {
+                            $.bootstrapGrowl("Invalid Login. Please try again.", {type: 'error'});
+                        }
+                        else { 
+                            try {
+                                var j = JSON.parse(s.responseText);
+                                if (j.error) {
+                                    $.bootstrapGrowl(j.error, {type: 'error'});
+                                } else {
+                                    $.bootstrapGrowl("There was an error. Please try again.", {type: 'error'});
+                                }
+                            }
+                            catch (err) {
+                                console.info(err);
+                            }
+                            
+                        }   
+                    },
+                    401: function(){
+                        // Redirect the to the login page.
+                        Backbone.history.navigate('login', true);          
+                    }
                 }
-            },this);  
-           
-            settings.fetch();
-  */           
-            
-            channel.on('alert', function(msg) {
-                bootbox.alert(msg);
             });
+
             
-            channel.on('prompt', function(msg, callback) {
-                bootbox.prompt(msg, callback);
-            });
+            jQuery(document).ajaxStart(function(e) {
+                $('#loader').show();
+            })
             
-            channel.on('confirm', function(msg, callback) {
-                bootbox.confirm(msg, callback);
-            });
+            jQuery(document).ajaxStop(function(e) {
+                $('#loader').hide();
+            })  
             
-            channel.on('notice_msg', function(msg) {
-                $.bootstrapGrowl(msg, {type: 'info'});
-            });
-            
-            channel.on('error_msg', function(msg) {
-                $.bootstrapGrowl(msg, {type: 'error'});
-            });
-            
-            channel.on('error_info', function(msg) {
-                $.bootstrapGrowl(msg, {type: 'info'});
-            });
-            
+            this.session = new Session();
         },
         
-        events: {
+        showSessionError: function()
+        {
+            $.bootstrapGrowl("Your session is expired. Please log in again.", {type: 'info'});
         },
         
         render: function() 
-        {
-            this.$el.empty();
-            this.$el.append(_.template(MasterTpl, {}));
-//            this.$el.append(this.paperView.render());
-//            this.$el.append(this.designToolsView.render());
-            return this.$el;
+        {    
+	        this.$el.append(this.loginView.render());
+    //        this.$el.append('<div id="page"></div><div id="loader"><img src="/images/loader.gif"/> Loading...</div>');
+            $('body').html(this.el);
         }
     });
     
-    return mainHomeView;
-
+    return mainView;
 });
-
-
