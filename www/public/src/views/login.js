@@ -3,15 +3,16 @@ define([
     'channel'
 ], 
 
-function(LoginTpl, channel)
+function(
+	LoginTpl, 
+	channel)
 {
     var lv = Backbone.View.extend(
     {
-        className: 'login',
         
         initialize: function()
-        {            
-            var that = this;
+        {
+            
         },
         
         events: 
@@ -27,7 +28,6 @@ function(LoginTpl, channel)
         login: function(e)
         {
             var valid = true;
-            
             if (!this.$el.find('.email').val()) 
             {
                 valid = false;
@@ -50,11 +50,10 @@ function(LoginTpl, channel)
             }
             
             $.ajax({
-              url: '/api/Login',
+              url: '/login',
               data: {
-                  'Email': this.$el.find('.email').val(),
-                  'Password': this.$el.find('.password').val(),
-                  'Format': 'json'
+                  'email': this.$el.find('.email').val(),
+                  'password': this.$el.find('.password').val()
               },
               success: function(res) {
                   if (res.error) 
@@ -63,12 +62,8 @@ function(LoginTpl, channel)
                       $('.loginForm').effect("shake", { times:8 }, 280);
                       return;
                   } else {
-                      var user = res.results[0];
-                      $.cookie('SessionId', user['SessionId']);
-                      $.cookie('Email', user['Email']);
-                      $.cookie('Password', user['Password']);
-                      
-                      window.location = '/';
+                      Backbone.history.navigate('members', true)
+                      $('.navigation').show();
                   }
               },
               dataType: 'json'
@@ -78,7 +73,8 @@ function(LoginTpl, channel)
         
         render: function() 
         {    
-            this.$el.html(_.template(LoginTpl, {}));
+            $('.navigation').hide();
+            this.$el.html(_.template(LoginTpl, {'a':'123'}));
             return this.el;
         }
         

@@ -1,0 +1,28 @@
+<div id="page" class="container">
+    <div class="row-fluid">
+        <h1>Members</h1>
+    </div>
+</div>
+
+
+<div class="container">
+
+<table class="table table-striped">
+
+	<tr>
+		<th>First Name</th>
+		<th>Last Name</th>
+		<th>Email</th>
+	</tr>
+
+	<% members.each(function(member) { console.info(member); %>
+		<tr>
+		<td><%= member.get('value').name_first %></td>
+		<td><%= member.get('value').name_last %></td>
+     	<td><%= member.get('value').email %></td>
+     		</tr>
+	<% }); %>
+
+</table>
+
+</div>

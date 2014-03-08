@@ -1,17 +1,22 @@
 define([
-    'models/session',
-    'src/views/login.js'
+    'views/navigation',
+    'views/login',
+    'models/session'
 ], 
 
-function(Session, LoginView)
+function(
+    NavigationView,
+    LoginView,
+    session
+)
 {
     var mainView = Backbone.View.extend(
     {
-        className: '',
+        className: 'page',
         
         initialize: function()
         {            
-
+            this.navigation = new NavigationView();
             this.loginView = new LoginView();
 
             sessionError = _.debounce(this.showSessionError, 300);
@@ -21,7 +26,9 @@ function(Session, LoginView)
                     400: function(s) {
                         // bad request 
                         if (s.responseText.indexOf('Invalid Session') !== -1) {
-                            sessionError();
+                            if (_.indexOf(['login', 'logout', ''], Backbone.history.fragment) == -1)
+                                sessionError();
+                            
                             Backbone.history.navigate('logout', true);
                         }
                         else if (s.responseText.indexOf('Expired Session') !== -1) {
@@ -61,19 +68,19 @@ function(Session, LoginView)
             jQuery(document).ajaxStop(function(e) {
                 $('#loader').hide();
             })  
-            
-            this.session = new Session();
         },
         
         showSessionError: function()
         {
-            $.bootstrapGrowl("Your session is expired. Please log in again.", {type: 'info'});
+            $.bootstrapGrowl("Your session is expired. Please log in again.", {type: 'info', allow_dismiss: true});
         },
         
         render: function() 
         {    
-	        this.$el.append(this.loginView.render());
-    //        this.$el.append('<div id="page"></div><div id="loader"><img src="/images/loader.gif"/> Loading...</div>');
+            this.$el.append(this.navigation.render());
+            
+            this.$el.append('<div id="page"></div><div id="loader"><img src="/images/loader.gif"/> Loading...</div>');
+            
             $('body').html(this.el);
         }
     });
