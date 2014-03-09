@@ -12,6 +12,7 @@ var express = require('express')
   , fs = require('fs')
   , nano = require('nano')('http://localhost:5984')
   , db = nano.db.use('skynet')
+  , members = nano.db.use('members')
 //  , machine = require('./lib/machine.js')
 
 // all environments
@@ -41,6 +42,63 @@ var sp = null
 app.get('/', function(req, res){
   res.render('index', { title: 'skynet' });
 });
+
+
+// Data API routes
+
+// Add a new member.
+app.post('/api/member/', function(req, res) {
+
+   members.insert(req.body, function(err, body) {
+      if (err) {
+         console.log(err.message);
+         res.send(500, {'error': err.message});
+      } else {
+         res.write(JSON.stringify(body));
+         res.end();
+      }
+   }); 
+
+});
+
+// Retrive data for specified member.
+app.get('/api/member/:id/', function(req, res) {
+
+   members.get(req.params.id, function(err, body) {
+      if (err) {
+         console.log(err.message);
+         res.send(500, {'error': err.message});
+      } else {
+         res.write(JSON.stringify(body));
+         res.end();
+      }
+   });
+
+});
+
+
+// Update existing member data.
+app.put('/api/member/:id/', function(req, res) {
+
+   members.get(req.params.id, function(err, member) {
+      if (err) {
+         console.log(err.message);
+         res.send(500, {'error': err.message});
+      } else {
+         req.body._rev = member._rev;
+         members.insert(req.body, req.params.id, function(err, body) {
+            if (err) {
+               console.log(err.message);
+            } else {
+               res.write(JSON.stringify(body));
+               res.end();
+            }
+         });
+      }
+   });
+
+});
+
 
 
 server.listen(app.get('port'), function(){
