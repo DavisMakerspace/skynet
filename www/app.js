@@ -3,8 +3,9 @@ var express = require('express')
   , http = require('http')  
   , server = http.createServer(app)
   , path = require('path')  
-  , nano = require('nano')('http://localhost:5984')
-  , members = nano.db.use('users')  
+  , nano = require('nano')('http://localhost:5984')  
+  , db = nano.db.use('skynet')
+  , members = nano.db.use('members')
 
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -72,7 +73,7 @@ app.get('/logout', function(req, res) {
 });
 
 app.get('/members', function(req, res) {
-    members.view('users', 'byemail', function(err, body) {
+    members.view('members', 'byemail', function(err, body) {
             if (err) {
                 res.send(JSON.stringify({error: err}));
             }
@@ -89,6 +90,63 @@ app.get('/session', function(req, res) {
     }
 
 });
+
+
+// Data API routes
+
+// Add a new member.
+app.post('/api/member/', function(req, res) {
+
+   members.insert(req.body, function(err, body) {
+      if (err) {
+         console.log(err.message);
+         res.send(500, {'error': err.message});
+      } else {
+         res.write(JSON.stringify(body));
+         res.end();
+      }
+   }); 
+
+});
+
+// Retrive data for specified member.
+app.get('/api/member/:id/', function(req, res) {
+
+   members.get(req.params.id, function(err, body) {
+      if (err) {
+         console.log(err.message);
+         res.send(500, {'error': err.message});
+      } else {
+         res.write(JSON.stringify(body));
+         res.end();
+      }
+   });
+
+});
+
+
+// Update existing member data.
+app.put('/api/member/:id/', function(req, res) {
+
+   members.get(req.params.id, function(err, member) {
+      if (err) {
+         console.log(err.message);
+         res.send(500, {'error': err.message});
+      } else {
+         req.body._rev = member._rev;
+         members.insert(req.body, req.params.id, function(err, body) {
+            if (err) {
+               console.log(err.message);
+            } else {
+               res.write(JSON.stringify(body));
+               res.end();
+            }
+         });
+      }
+   });
+
+});
+
 
 
 server.listen(app.get('port'), function(){

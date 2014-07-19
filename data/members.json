@@ -1,6 +1,6 @@
 [
     {
-        "_id": "_design/users",
+        "_id": "_design/members",
         "language": "javascript",
         "views": {
             "byemail": {
