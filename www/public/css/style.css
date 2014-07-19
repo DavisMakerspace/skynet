@@ -54,3 +54,11 @@ body.modal-open {
 	margin-bottom: 15px;
 	padding: 7px 9px;
 }
+
+.navbar .brand {
+    margin-top:5px;
+}
+
+#page {
+    margin-top:50px;
+}

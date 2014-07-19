@@ -1,5 +1,15 @@
 [
     {
+        "_id": "_design/users",
+        "language": "javascript",
+        "views": {
+            "byemail": {
+                "map": "function(doc) {  emit(doc.email, doc); }"
+            }
+        }
+    },
+    
+    {
         "user_id": "1210-0001",
         "name_first": "James",
         "name_last": "Holliday",

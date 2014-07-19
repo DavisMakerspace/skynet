@@ -1,33 +1,29 @@
 define([
-],
+], 
 function()
 {
     var sm = Backbone.Model.extend(
     {
+        url: '/session',
+        
         initialize: function()
         {
-            this.set({
-                'UserId': $.cookie('UserId'),
-                'SessionId': $.cookie('SessionId')
-            });
         },
-
-        defaults: {
-            'UserId': null,
-            'SessionId': null,
-        },
-
-        save: function(auth_data)
+        
+        defaults: 
         {
-            $.cookie('UserId', auth_data.UserId);
-            $.cookie('SessionId', auth_data.SessionId);
+            id: null,
+            key: null
         },
-
+        
         authenticated: function()
         {
-            return Boolean(this.get('SessionId'));
+            return Boolean(this.get('id') != null);
         },
     });
-
-    return sm;
+    
+    return new sm();	   
 });
+
+
+

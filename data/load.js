@@ -1,5 +1,7 @@
 var fs = require('fs')
   , http = require('http')
+  , nano = require('../www/node_modules/nano')('http://localhost:5984')
+    
   
 var po = {
     'host':'localhost', 
@@ -61,4 +63,3 @@ var loadData = function(file) {
         }
     });
 }
-
